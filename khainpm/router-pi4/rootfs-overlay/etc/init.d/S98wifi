@@ -1,0 +1,47 @@
+#!/bin/sh
+
+INTERFACE="wlan0"
+CONFIG="/etc/config/wpa_supplicant.conf"
+
+case "$1" in
+    start)
+        logger -t WiFiApp "Starting Wi-Fi..."
+
+        modprobe brcmfmac
+
+        i=0
+        while [ ! -d /sys/class/net/$INTERFACE ] && [ $i -lt 10 ]; do
+            sleep 1
+            i=$((i + 1))
+        done
+
+        ip link set $INTERFACE up || exit 1
+
+        killall wpa_supplicant 2>/dev/null
+        wpa_supplicant -B -i $INTERFACE -c $CONFIG || exit 1
+
+        killall udhcpc 2>/dev/null
+        udhcpc -b -i $INTERFACE
+        ;;
+
+    stop)
+        logger -t WiFiApp "Stopping Wi-Fi..."
+
+        killall udhcpc 2>/dev/null
+        killall wpa_supplicant 2>/dev/null
+        ip link set $INTERFACE down
+        ;;
+
+    restart)
+        $0 stop
+        sleep 1
+        $0 start
+        ;;
+
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0

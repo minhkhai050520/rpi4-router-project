@@ -1,0 +1,54 @@
+#!/bin/sh
+
+NFT_BIN="/usr/sbin/nft"
+CONFIG="/etc/config/nft_firewall.conf"
+LOGGER_TAG="Firewall"
+
+load_firewall() {
+    [ -x "$NFT_BIN" ] || {
+        logger -t "$LOGGER_TAG" "Error: $NFT_BIN not found"
+        return 1
+    }
+
+    [ -f "$CONFIG" ] || {
+        logger -t "$LOGGER_TAG" "Error: $CONFIG not found"
+        return 1
+    }
+
+    if "$NFT_BIN" -c -f "$CONFIG" >/dev/null 2>&1; then
+        "$NFT_BIN" -f "$CONFIG"
+        logger -t "$LOGGER_TAG" "Firewall loaded successfully"
+    else
+        logger -t "$LOGGER_TAG" "Error: Invalid nftables configuration"
+        return 1
+    fi
+}
+
+case "$1" in
+    start)
+        logger -t "$LOGGER_TAG" "Starting firewall..."
+        load_firewall
+        ;;
+
+    stop)
+        logger -t "$LOGGER_TAG" "Stopping firewall..."
+        "$NFT_BIN" flush ruleset
+        ;;
+
+    restart)
+        logger -t "$LOGGER_TAG" "Restarting firewall..."
+        "$NFT_BIN" flush ruleset
+        load_firewall
+        ;;
+
+    status)
+        "$NFT_BIN" list ruleset
+        ;;
+
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
+
+exit $?

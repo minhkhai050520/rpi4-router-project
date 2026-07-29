@@ -1,0 +1,24 @@
+#!/bin/sh
+case "$1" in
+	start)
+		# assign IP gateway for eth0
+		logger -t dnsmasqAPP "assign IP gatway"
+		ip addr add 192.168.10.1/24 dev eth0
+
+		logger -t dnsmasqApp "starting dnsmasq services"
+		# run dnsmasq
+		dnsmasq -C /etc/config/dnsmasq.conf
+		logger -t dnsmasqApp "enabled dnsmasq done"
+		;;
+	stop)
+		logger -t dnsmasqApp "stopping dnsmasq services"
+		killall dnsmasq
+		logger -t dnsmasqApp "disabled dnsmasq done"
+		;;
+	*)
+		echo "Usage: $0 {start|stop}"
+		exit 1
+		;;
+esac
+
+exit 0
