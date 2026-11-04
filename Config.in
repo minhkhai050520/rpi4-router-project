@@ -1,0 +1,1 @@
+source "$BR2_EXTERNAL_RPI4_ROUTER_PATH/package/myfw-ctl/Config.in"

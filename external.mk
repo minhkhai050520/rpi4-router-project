@@ -1,0 +1,1 @@
+include $(sort $(wildcard $(BR2_EXTERNAL_RPI4_ROUTER_PATH)/package/*/*.mk))

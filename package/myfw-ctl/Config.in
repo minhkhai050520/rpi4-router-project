@@ -1,0 +1,4 @@
+config BR2_PACKAGE_MYFW_CTL
+        bool "myfw-ctl"
+        help
+          User-space Generic Netlink to control myfw firewall.

@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
     make \
     patch \
     perl \
+    pkg-config \
     python3 \
     rsync \
     sed \
