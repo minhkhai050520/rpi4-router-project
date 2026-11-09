@@ -1,11 +1,12 @@
-CFLAGS ?= -Wall -O2
-CFLAGS += $(shell pkg-config --cflags libnl-3.0 libnl-genl-3.0)
-LDFLAGS += $(shell pkg-config --libs libnl-3.0 libnl-genl-3.0)
+EXTRA_CFLAGS ?= -Wall -O2
+EXTRA_CFLAGS += -I$(STAGING_DIR)/usr/include/libnl3
+
+LIBS = -L$(STAGING_DIR)/usr/lib -lnl-genl-3 -lnl-3
 
 all: myfw-ctl
 
 myfw-ctl: myfw_ctl.c
-	$(CC) $(CFLAGS) -o myfw-ctl myfw_ctl.c $(LDFLAGS)
+	$(CC) $(EXTRA_CFLAGS) myfw_ctl.c -o myfw-ctl $(LIBS)
 
 clean:
 	rm -f myfw-ctl
